@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../include/MyUniquePtr.h"
+#include "../include/myUniquePtr.h"
 #include <cassert>
 
 class Person {
@@ -36,6 +36,10 @@ int main() {
     codeforge::MyUniquePtr<int> p3(std::move(p1));
     std::cout << *p3 << std::endl;  // should print 100
     assert(p1.get() == nullptr); 
-    
+
+    codeforge::MyUniquePtr<int> p4(new int(200));
+    p3 = std::move(p4);
+    std::cout << *p3 << std::endl;  
+
     return 0;
 }

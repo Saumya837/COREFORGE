@@ -21,6 +21,9 @@ namespace codeforge{
                 delete raw_ptr;
             }
 
+            /* && operator is used when it is not needed by any one
+             else and we want to tansfer the ownership
+            */
             MyUniquePtr(MyUniquePtr&& other) noexcept : raw_ptr(other.raw_ptr){
                 other.raw_ptr = nullptr;
             }
@@ -41,9 +44,15 @@ namespace codeforge{
                 return raw_ptr;
             }
 
-            /* && operator is used when it is not needed by any one
-             else and we want to tansfer the ownership
-            */
+            MyUniquePtr& operator=(MyUniquePtr&& other) noexcept{
+                if(this != &other){
+                    delete raw_ptr;
+                    raw_ptr = other.raw_ptr;
+                    other.raw_ptr = nullptr;
+                }
+                return *this;
+            }
+            
            
             //DELETE copy constructor and copy assignment
             // this is what makes it UNIQUE - only one owner
