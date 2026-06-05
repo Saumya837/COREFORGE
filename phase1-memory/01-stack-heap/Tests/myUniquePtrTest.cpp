@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../include/myUniquePtr.h"
+#include "../include/MyUniquePtr.h"
 #include <cassert>
 
 class Person {

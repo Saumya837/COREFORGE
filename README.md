@@ -7,7 +7,7 @@ when code runs — memory, threads, I/O, storage.
 
 Every concept here is built, not read.
 
-Background: Postgres, data systems, GST domain.
+Background: Postgres, data systems.
 Goal: understand what's underneath the tools I've been using.
 
 Started: June 2026
