@@ -1,4 +1,3 @@
-#include<iostream>
 /*
     MyUniquePtr is a simple implementation of a unique pointer in C++.
     It is a template class that can manage any type of heap pointer,
@@ -62,7 +61,7 @@ namespace codeforge{
                 return raw_ptr;
             }
 
-            MyUniquePtr& operator=(MyUniquePtr&& other) :  noexcept{
+            MyUniquePtr& operator=(MyUniquePtr&& other) noexcept{
                 if(this != &other){
                     delete raw_ptr;
                     raw_ptr = other.raw_ptr;
