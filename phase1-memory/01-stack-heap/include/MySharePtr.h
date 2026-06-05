@@ -8,7 +8,7 @@
         4. It uses refrence counting to keep track of how many MySharePtr instances are sharing the same pointer, and deletes the pointer when the count goes to zero.
 */
 
-namespace codespace{
+namespace coreforge{
     template <typename T>
     class MySharePtr{
         private:
@@ -42,6 +42,10 @@ namespace codespace{
 
             T* operator->() const {
                 return raw_ptr;
+            }
+
+            int use_count() const {
+                return *ref_count;
             }
 
             //copy assignment operator for shared ownership

@@ -17,7 +17,7 @@
            to enforce unique ownership.
 */
 
-namespace codeforge{
+namespace coreforge{
 
     template<typename T>
     /*
