@@ -32,14 +32,13 @@
 */
 
 #pragma once
-#include "./MyWeakPtr.h"
-#include "./ControlBlock.h"
+#include "MyWeakPtr.h"
+#include "ControlBlock.h"
 
 namespace coreforge{
 
     template <typename T>
     class MySharePtr{
-
         template<typename U> friend class MyWeakPtr;
         private:
                 T* raw_ptr;
@@ -55,7 +54,11 @@ namespace coreforge{
             //constructor takes ownership of a pointer
             explicit MySharePtr(T* ptr): raw_ptr(ptr), c(new ControlBlock()) {};
 
+            // empty shared_ptr — owns nothing
+            MySharePtr() : raw_ptr(nullptr), c(nullptr) {};
+
             ~MySharePtr(){
+                if(c == nullptr) return;
                 (c->ref_count)--;
 
                 if(c->ref_count == 0){

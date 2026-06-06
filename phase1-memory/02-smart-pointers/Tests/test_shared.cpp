@@ -1,5 +1,5 @@
-#include <iostream>
-#include "../include/MyUniquePtr.h"
+#include<iostream>
+#include "../include/MySharePtr.h"
 #include <cassert>
 
 using namespace coreforge;
@@ -16,30 +16,46 @@ class Person {
         }
 };
 
-int main() {
-    // Test 1 — basic int pointer
-    MyUniquePtr<int> p1(new int(42));
-    assert(*p1 == 42);
+int main(){
 
-    // Test 2 — modify through dereference
-    *p1 = 100;
-    assert(*p1 == 100);  // should print 100
-    
-   MyUniquePtr<Person> p2(new Person("Alice", 3));
+    // Test 1: Copy Constructor Test
+    MySharePtr<int> p1(new int(43));
+    MySharePtr<int> p2(p1);
 
-    // Test 3 — access member through arrow operator
-    p2->printInfo();
-    p2->age = 21;// 
-    p2->name = "Bob";
-    p2->printInfo();  // should print Name: Bob, Age: 21
+    assert(p1.get() == p2.get());
+    assert(p1.use_count() == 2);
+    assert(p2.use_count() == 2);
 
-    MyUniquePtr<int> p3(std::move(p1));
-    std::cout << *p3 << std::endl;  // should print 100
-    assert(p1.get() == nullptr); 
 
-    MyUniquePtr<int> p4(new int(200));
-    p3 = std::move(p4);
-    std::cout << *p3 << std::endl;  
+    // Test 2: Copy Assignment operator Test
+    MySharePtr<Person> p3(new Person("Sanketh", 24));
+    MySharePtr<Person> p4(new Person("Somya", 29));
+    p4 = p3;
+    assert(p3.get() == p4.get());
+    assert(p3.use_count() == 2);
+    assert(p4.use_count() == 2);
 
-    return 0;
+
+    //Test 3: dereference shared Pointer
+    assert(*p1 == 43);
+    assert(*p2 == 43);
+
+    //Test 4: operator -> 
+    assert(p3->name == "Sanketh");
+    assert(p3->age == 24);
+
+    assert(p4->name == "Sanketh");
+    assert(p3->age == 24);
+
+    MySharePtr<int> p5(new int(99));
+    // Test 5: ref count decrements when owner dies
+    {
+        MySharePtr<int> p6(p5);
+        assert(p5.use_count() == 2);
+    } // inner owners destroyed, p5 use_count should be 1
+
+    assert(p5.use_count() == 1);
+
+    std::cout<<"All test Passed"<<std::endl;
 }
+
