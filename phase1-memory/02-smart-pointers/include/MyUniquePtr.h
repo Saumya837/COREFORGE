@@ -17,6 +17,8 @@
            to enforce unique ownership.
 */
 
+#pragma once
+
 namespace coreforge{
 
     template<typename T>
