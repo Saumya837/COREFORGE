@@ -1,11 +1,34 @@
 /*
-    The shareUniquePtr is use for managing shared ownership of a pointer, it is a simple implementation of a shared_pointer in c++.
-    It is a template class that can manage any type of pointer, and it ensueres shared ownership of a pointer.
-    The main features of MySharePtr are:
-        1. It takes ownership of a pointer and deletes it when the last MySharePtr goes out of a scope.
-        2. It support copy semantics, mutiple ptrs can share ownewrship of the same pounter.
-        3. It provides operator* and operator-> to accerss the underlying object naturally.
-        4. It uses refrence counting to keep track of how many MySharePtr instances are sharing the same pointer, and deletes the pointer when the count goes to zero.
+    MySharedPtr - A custom implementation of std::shared_ptr in C++
+
+    Core Concept:
+        Manages shared ownership of a heap pointer using reference counting.
+        Multiple MySharedPtr instances can own the same pointer.
+        Data is deleted only when the last owner goes out of scope.
+
+    Ownership Model:
+        - ref_count  → tracks how many MySharedPtr instances own the data
+        - weak_count → tracks how many MyWeakPtr instances observe the data
+        - Both counts live in a shared ControlBlock on the heap
+
+    Memory Management:
+        - data deleted when ref_count hits 0
+        - ControlBlock deleted when both ref_count and weak_count hit 0
+        - This separation allows MyWeakPtr to safely check if data is alive
+
+    Features:
+        1. constructor      → takes ownership, initializes ref_count to 1
+        2. destructor       → decrements ref_count, deletes when last owner dies
+        3. copy constructor → shares ownership, increments ref_count
+        4. copy assignment  → releases current, takes new ownership
+        5. get()            → returns raw pointer without transferring ownership
+        6. operator*        → dereference like a real pointer
+        7. operator->       → member access like a real pointer
+        8. use_count()      → how many shared owners exist
+
+    Friend:
+        MyWeakPtr has access to private constructor
+        used by MyWeakPtr::lock() to borrow temporary ownership
 */
 
 #include "./MyWeakPtr.h"
