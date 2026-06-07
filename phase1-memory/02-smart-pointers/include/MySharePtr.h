@@ -37,7 +37,7 @@
 
 namespace coreforge{
 
-    template <typename T>
+    template <typename T> 
     class MySharePtr{
         template<typename U> friend class MyWeakPtr;
         private:

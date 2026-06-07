@@ -20,14 +20,14 @@
 #pragma once
 
 namespace coreforge{
-
-    template<typename T>
-    /*
+     /*
         Template T is the genric type of the pointer we manage, 
         without this you have diffrent MyUniquePtr for each Type, e.g for int
         you will have MyUniquePtr<int> and for double you will have MyUniquePtr<double>
     */ 
 
+
+    template<typename T>
     class MyUniquePtr{
         private: 
             T* raw_ptr; 

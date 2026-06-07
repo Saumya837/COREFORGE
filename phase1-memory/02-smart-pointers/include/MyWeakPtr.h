@@ -4,10 +4,10 @@
 #include "ControlBlock.h"
 
 
-namespace codeforge{
+namespace coreforge{
     template<typename T> class MySharePtr;
 
-    template <typename T>
+    template <typename T> 
     class MyWeakPtr{
         private:
             T* raw_ptr;
