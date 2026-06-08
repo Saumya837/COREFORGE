@@ -32,6 +32,7 @@
 */
 
 #pragma once
+#include<memory>
 #include "MyWeakPtr.h"
 #include "ControlBlock.h"
 
