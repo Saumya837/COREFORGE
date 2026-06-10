@@ -100,18 +100,15 @@ class MyVector{
     // modifiers
     void push_back(T val){
         if(_end == _capacity_end){
-            if(_start == nullptr)
-                reserve(1);      // first allocation!
-            else
                 _resize_internal();
         }
         //memory is uninitialized, construct properly
-        std::__construct_at(_end, val);
+        new (_end) T(val); 
         _end++;
     }
 
     //need to learn perfect forwarding planned for weekends
-    void emplace_back();
+    void emplace_back() = delete;
 
     void pop_back(){
         if(empty()) 
