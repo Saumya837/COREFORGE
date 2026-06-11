@@ -1,23 +1,6 @@
 #pragma once
 #include <memory>
 #include<iostream>
-
-template <typename T>
-struct DequeIterator {
-    T*  _cur;          // position in current chunk
-    T*  _chunk_start;  // start of current chunk
-    T*  _chunk_end;    // end of current chunk
-    T** _map_ptr;      // this chunk in map
-
-    next();
-        // _cur++
-        // if _cur == _chunk_end → jump to next chunk
-
-    prev();
-        // _cur--
-        // if _cur == _chunk_start → jump to prev chunk
-};
-
 template <typename T>
 class MyDeque{
     private:
@@ -26,10 +9,9 @@ class MyDeque{
         T** _data_start;
         T** _data_end;
 
+        const static int CHUNK_SIZE = 8; 
         std::allocator<T> _alloc;
         std::allocator<T*> _map_alloc;
-
-        const static int CHUNK_SIZE = 8; 
 
         void _resize_map_with_recentering(){
             int num_elements = _data_end - _data_start;
@@ -95,14 +77,50 @@ class MyDeque{
 
 
     public:
-        MyDeque():_map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_ednd(nullptr){
+        struct DequeIterator {
+            T*  _cur;
+            T*  _chunk_start;
+            T*  _chunk_end;
+            T** _map_ptr;
+
+            void next(){
+                _cur++;
+                if(_cur == _chunk_end){
+                    _map_ptr++;
+                    _chunk_start = *(_map_ptr);
+                    _chunk_end = _chunk_start + CHUNK_SIZE;
+                    _cur = _chunk_start;
+                }
+            }
+
+            void prev(){
+                if(_cur == _chunk_start){
+                    _map_ptr--;
+                    _chunk_start = *(_map_ptr);
+                    _chunk_end = _chunk_start + CHUNK_SIZE;
+                    _cur = _chunk_end;
+                }
+                _cur--;
+            }
+        };
+
+        MyDeque():_map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_end(nullptr){
         }
 
         MyDeque(int size){};
 
         ~MyDeque(){
             if(_map_start == nullptr) return;
+
+            for(T** p = _data_start; p != _data_end; p++){
+                for(int i = 0; i< CHUNK_SIZE; i++)
+                    std::destroy_at(*p + i);
+                _alloc.deallocate(*p, CHUNK_SIZE);
+            }
+
+            _map_alloc.deallocate(_map_start, _map_end - _map_start);
         }
+
         void push_back();
         void push_front();
         void pop_back();
