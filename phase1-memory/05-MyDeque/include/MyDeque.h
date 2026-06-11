@@ -107,7 +107,39 @@ class MyDeque{
         MyDeque():_map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_end(nullptr){
         }
 
-        MyDeque(int size){};
+        MyDeque(int size): _map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_end(nullptr){
+            int num_chunks = (size + CHUNK_SIZE - 1)/CHUNK_SIZE;
+            int map_capacity = num_chunks << 1;
+            _map_start = _map_alloc.allocate(map_capacity);
+            _map_end = _map_start + map_capacity;
+
+            //putting the data from _data_start
+            _data_start = _map_start + (num_chunks >> 1);
+            _data_end = _data_start + num_chunks;
+
+            for(T** p = _data_start; p != _data_end; p++){
+                *p = _alloc.allocate(CHUNK_SIZE);
+                std::uninitialized_fill(*p, *p + CHUNK_SIZE, T{});
+            }
+           
+        }
+
+        MyDeque(int size, T val): _map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_end(nullptr){
+            int num_chunks = (size + CHUNK_SIZE - 1)/CHUNK_SIZE;
+            int map_capacity = num_chunks << 1;
+            _map_start = _map_alloc.allocate(map_capacity);
+            _map_end = _map_start + map_capacity;
+
+            //putting the data from _data_start
+            _data_start = _map_start + (num_chunks >> 1);
+            _data_end = _data_start + num_chunks;
+
+            for(T** p = _data_start; p != _data_end; p++){
+                *p = _alloc.allocate(CHUNK_SIZE);
+                std::uninitialized_fill(*p, *p + CHUNK_SIZE, val);
+            }
+           
+        }
 
         ~MyDeque(){
             if(_map_start == nullptr) return;
@@ -117,7 +149,6 @@ class MyDeque{
                     std::destroy_at(*p + i);
                 _alloc.deallocate(*p, CHUNK_SIZE);
             }
-
             _map_alloc.deallocate(_map_start, _map_end - _map_start);
         }
 
