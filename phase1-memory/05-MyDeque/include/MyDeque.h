@@ -3,7 +3,41 @@
 #include<iostream>
 template <typename T>
 class MyDeque{
+    public:
+        struct DequeIterator {
+            T*  _cur;
+            T*  _chunk_start;
+            T*  _chunk_end;
+            T** _map_ptr;
+
+            DequeIterator():_cur(nullptr), _chunk_start(nullptr), _chunk_end(nullptr), _map_ptr(nullptr){};
+
+            DequeIterator(T** map_ptr):_cur(*map_ptr), _chunk_start(*map_ptr), _chunk_end(*map_ptr + CHUNK_SIZE), _map_ptr(map_ptr){};
+
+            void next(){
+                _cur++;
+                if(_cur == _chunk_end){
+                    _map_ptr++;
+                    _chunk_start = *(_map_ptr);
+                    _chunk_end = _chunk_start + CHUNK_SIZE;
+                    _cur = _chunk_start;
+                }
+            }
+
+            void prev(){
+                if(_cur == _chunk_start){
+                    _map_ptr--;
+                    _chunk_start = *(_map_ptr);
+                    _chunk_end = _chunk_start + CHUNK_SIZE;
+                    _cur = _chunk_end;
+                }
+                _cur--;
+            }
+        }
+
     private:
+        DequeIterator _begin;
+        DequeIterator _end;
         T** _map_start; // map start address which hold the pointer start address
         T** _map_end; //map start address which hold the pointer start address
         T** _data_start;
@@ -77,52 +111,11 @@ class MyDeque{
 
 
     public:
-        struct DequeIterator {
-            T*  _cur;
-            T*  _chunk_start;
-            T*  _chunk_end;
-            T** _map_ptr;
 
-            void next(){
-                _cur++;
-                if(_cur == _chunk_end){
-                    _map_ptr++;
-                    _chunk_start = *(_map_ptr);
-                    _chunk_end = _chunk_start + CHUNK_SIZE;
-                    _cur = _chunk_start;
-                }
-            }
-
-            void prev(){
-                if(_cur == _chunk_start){
-                    _map_ptr--;
-                    _chunk_start = *(_map_ptr);
-                    _chunk_end = _chunk_start + CHUNK_SIZE;
-                    _cur = _chunk_end;
-                }
-                _cur--;
-            }
-        };
-
-        MyDeque():_map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_end(nullptr){
+        MyDeque():_map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_end(nullptr), _begin(nullptr), _end(nullptr){
         }
 
-        MyDeque(int size): _map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_end(nullptr){
-            int num_chunks = (size + CHUNK_SIZE - 1)/CHUNK_SIZE;
-            int map_capacity = num_chunks << 1;
-            _map_start = _map_alloc.allocate(map_capacity);
-            _map_end = _map_start + map_capacity;
-
-            //putting the data from _data_start
-            _data_start = _map_start + (num_chunks >> 1);
-            _data_end = _data_start + num_chunks;
-
-            for(T** p = _data_start; p != _data_end; p++){
-                *p = _alloc.allocate(CHUNK_SIZE);
-                std::uninitialized_fill(*p, *p + CHUNK_SIZE, T{});
-            }
-           
-        }
+        MyDeque(int size): MyDeque(int size, T val) {}
 
         MyDeque(int size, T val): _map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_end(nullptr){
             int num_chunks = (size + CHUNK_SIZE - 1)/CHUNK_SIZE;
@@ -138,6 +131,16 @@ class MyDeque{
                 *p = _alloc.allocate(CHUNK_SIZE);
                 std::uninitialized_fill(*p, *p + CHUNK_SIZE, val);
             }
+
+            _begin = DequeIterator(_data_start);
+            _end = DequeIterator(_data_end - 1);
+
+            // handle partial last chunk
+            int remaining = size % CHUNK_SIZE;
+            if(remaining == 0)
+                _end._cur = _end._chunk_end;
+            else
+                _end._cur = _end._chunk_start + remaining;
            
         }
 
@@ -152,7 +155,20 @@ class MyDeque{
             _map_alloc.deallocate(_map_start, _map_end - _map_start);
         }
 
-        void push_back();
+        DequeIterator begin() {
+            return _begin;  
+        }
+
+        DequeIterator end() {
+            return _end;  
+        }
+
+
+        // void push_back(){
+        //     if _map_start == _end
+            
+        // }
+    
         void push_front();
         void pop_back();
         void pop_front();
