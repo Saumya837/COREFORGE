@@ -3,12 +3,14 @@
 #include<iostream>
 template <typename T>
 class MyDeque{
+
     public:
         struct DequeIterator {
             T*  _cur;
             T*  _chunk_start;
             T*  _chunk_end;
             T** _map_ptr;
+            const static int CHUNK_SIZE = 8; 
 
             DequeIterator():_cur(nullptr), _chunk_start(nullptr), _chunk_end(nullptr), _map_ptr(nullptr){};
 
@@ -33,6 +35,27 @@ class MyDeque{
                 }
                 _cur--;
             }
+            
+            DequeIterator& operator++(){
+                _cur++;
+                if(_cur == _chunk_end){
+                    _map_ptr++;
+                    _chunk_start = *(_map_ptr);
+                    _chunk_end   = _chunk_start + CHUNK_SIZE;
+                    _cur         = _chunk_start;
+                }
+                return *this;
+            }
+
+            T& operator*(){
+                return *_cur;
+            }
+
+
+           bool operator!=(const DequeIterator& other){
+                return _cur != other._cur;
+            }
+
         };
 
     private:
@@ -132,11 +155,10 @@ class MyDeque{
 
 
     public:
-
-        MyDeque():_map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_end(nullptr), _begin(nullptr), _end(nullptr){
+        MyDeque():_map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_end(nullptr), _begin(), _end(){
         }
 
-        MyDeque(int size): MyDeque(int size, T val) {}
+        MyDeque(int size): MyDeque(size, T{}) {}
 
         MyDeque(int size, T val): _map_start(nullptr), _map_end(nullptr), _data_start(nullptr), _data_end(nullptr){
             int num_chunks = (size + CHUNK_SIZE - 1)/CHUNK_SIZE;
@@ -183,7 +205,6 @@ class MyDeque{
         DequeIterator end() {
             return _end;  
         }
-
 
         void push_back(T val){
             if(_map_start == nullptr){
@@ -262,5 +283,15 @@ class MyDeque{
                 _begin = DequeIterator(_data_start);
                 _begin._cur = _begin._chunk_start;
             }
+        }
+
+        T& front(){
+            if(_map_start == nullptr) throw std::runtime_error("empty!");
+            return *(_begin._cur);
+        }
+
+        T& tail(){
+            if(_map_start == nullptr) throw std::runtime_error("empty!");
+            return *(_end._cur - 1);
         }
 };
