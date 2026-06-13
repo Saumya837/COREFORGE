@@ -206,7 +206,7 @@ class MyDeque{
             }
 
             std::construct_at(_end._cur, val);
-            _end.next();
+            _end._cur++;
         }
 
     
@@ -226,22 +226,41 @@ class MyDeque{
                     _check_and_grow_map_front();
                 _data_start--;
                 *(_data_start) = _alloc.allocate(CHUNK_SIZE);
-                _begin = DequeIterator(_data_start - 1);
+                _begin = DequeIterator(_data_start);
                 _begin._cur = _begin._chunk_end;
             }
-            _begin.prev();
+            _begin._cur--;
             std::construct_at(_begin._cur, val);
         }
 
         void pop_back(){
-            if(_map_start == nullptr)
-                return;
-            
+            if(_map_start == nullptr) return;
+
+            _end._cur--;
+            std::destroy_at(_end._cur);
+            //last element in the chunk
+            if(_end._cur == _end._chunk_start){
+                //deallocate the chunk
+                _alloc.deallocate(*(_data_end - 1), CHUNK_SIZE);
+                _data_end--;
+
+                _end = DequeIterator(_data_end - 1);
+                _end._cur = _end._chunk_end;
+            }
         }
         
         void pop_front(){
-            if(_map_start == nullptr)
-                return;
-            
+            if(_map_start == nullptr) return;
+
+            std::destroy_at(_begin._cur);
+            _begin._cur++;
+
+            if(_begin._cur == _begin._chunk_end){
+                _alloc.deallocate(*(_data_start), CHUNK_SIZE);
+                _data_start++;
+
+                _begin = DequeIterator(_data_start);
+                _begin._cur = _begin._chunk_start;
+            }
         }
 };
