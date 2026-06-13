@@ -33,7 +33,7 @@ class MyDeque{
                 }
                 _cur--;
             }
-        }
+        };
 
     private:
         DequeIterator _begin;
@@ -55,17 +55,19 @@ class MyDeque{
 
             int recenter_point = num_elements >> 1;
 
-            //copy all the elements in the newArr with recentrin
-            std::copy(_data_start, _data_end, (newDeque + recenter_point));
+            //If dequeue is not empty
+            if(_data_start != nullptr){
+                //copy all the elements in the newArr with recentrin
+                std::copy(_data_start, _data_end, (newDeque + recenter_point));
 
-            //deallocating the old space
-            _map_alloc.deallocate(_map_start, _map_end - _map_start);
+                //deallocating the old space
+                _map_alloc.deallocate(_map_start, _map_end - _map_start);
+            }
 
             _map_start = newDeque;
             _data_start = _map_start + recenter_point;
             _data_end = _data_start + num_elements;
             _map_end = _map_start + new_capacity;
-
         };
 
         void _recenter_backward(){
@@ -108,6 +110,25 @@ class MyDeque{
             _data_start -= shift;
             _data_end -= shift;
         }
+
+        void _check_and_grow_map_back(){
+            if(_data_end == _map_end){
+                if(_data_start > _map_start)
+                    _recenter_forward();
+                else
+                    _resize_map_with_recentering();
+            }
+        }
+
+        void _check_and_grow_map_front(){
+            if(_data_start == _map_start){
+                if(_data_end < _map_end)
+                    _recenter_backward();
+                else
+                    _resize_map_with_recentering();
+            }
+        }
+
 
 
     public:
@@ -164,12 +185,63 @@ class MyDeque{
         }
 
 
-        // void push_back(){
-        //     if _map_start == _end
-            
-        // }
+        void push_back(T val){
+            if(_map_start == nullptr){
+                _resize_map_with_recentering();
+                *(_data_start) = _alloc.allocate(CHUNK_SIZE);
+                _data_end = _data_start + 1;
+
+                _begin = DequeIterator(_data_start);
+                _end = DequeIterator(_data_start);
+                _begin._cur = *(_data_start);
+                _end._cur = *(_data_start);
+            }
+
+            else if(_end._cur == _end._chunk_end){
+                if(_data_end == _map_end)
+                    _check_and_grow_map_back();
+                *(_data_end) = _alloc.allocate(CHUNK_SIZE);
+                _data_end++;
+                _end = DequeIterator(_data_end - 1);
+            }
+
+            std::construct_at(_end._cur, val);
+            _end.next();
+        }
+
     
-        void push_front();
-        void pop_back();
-        void pop_front();
+        void push_front(T val){
+            if(_map_start == nullptr){
+                _resize_map_with_recentering();
+                *(_data_start) = _alloc.allocate(CHUNK_SIZE);
+                _data_end = _data_start + 1;
+
+                _begin = DequeIterator(_data_start);
+                _end = DequeIterator(_data_start);
+                _end._cur = *(_data_start);
+            }
+
+            else if(_begin._cur == _begin._chunk_start){
+                if(_data_start == _map_start)
+                    _check_and_grow_map_front();
+                _data_start--;
+                *(_data_start) = _alloc.allocate(CHUNK_SIZE);
+                _begin = DequeIterator(_data_start - 1);
+                _begin._cur = _begin._chunk_end;
+            }
+            _begin.prev();
+            std::construct_at(_begin._cur, val);
+        }
+
+        void pop_back(){
+            if(_map_start == nullptr)
+                return;
+            
+        }
+        
+        void pop_front(){
+            if(_map_start == nullptr)
+                return;
+            
+        }
 };
