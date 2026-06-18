@@ -1,0 +1,8 @@
+add_subdirectory(01-stack-heap)
+add_subdirectory(02-smart-pointers)
+add_subdirectory(03-MyVector)
+add_subdirectory(04-MyStack)
+add_subdirectory(05-MyDeque)
+add_subdirectory(06-memory-pool)
+add_subdirectory(07-allocator)
+add_subdirectory(08-MyHashMap)

@@ -7,7 +7,7 @@ namespace CoreThread{
         }
     }
 
-    voidf SpinLock::unlock(){
+    void SpinLock::unlock(){
         flag.clear();
     }
 };
