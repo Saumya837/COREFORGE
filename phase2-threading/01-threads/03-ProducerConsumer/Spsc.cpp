@@ -25,18 +25,13 @@ void producer() {
             //lock the queue's mutex (lock_guard is fine
             std::lock_guard<std::mutex> lock(mtx);
             q.push(i);
-
         }
-        // TODO 5: notify the consumer that the queue changed
-        // (do this AFTER the lock above is released -- the closing brace
-        //  of the block above already dropped it)
-        cv.notify_one();
 
+        cv.notify_one();
         {
             std::lock_guard<std::mutex> plock(print_mtx);
             std::cout << "produced: " << i << std::endl;
         }
-
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }

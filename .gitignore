@@ -11,5 +11,3 @@ build/
 *.o
 *.out
 *.a
-
-mpmc.cpp
