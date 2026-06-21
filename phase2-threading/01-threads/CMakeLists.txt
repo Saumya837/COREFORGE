@@ -7,6 +7,7 @@ add_executable(waitflag 02-waitflag/WaitFlag.cpp)
 add_executable(spsc 03-ProducerConsumer/spsc.cpp)
 add_executable(mpmc 03-ProducerConsumer/mpmc.cpp)
 
+add_executable(graceful_shutdown 04-GracefulShutdown/graceful_shutdown.cpp)
 
 target_compile_options(first_thread PRIVATE -fsanitize=thread -g)
 target_link_options(first_thread PRIVATE -fsanitize=thread)
