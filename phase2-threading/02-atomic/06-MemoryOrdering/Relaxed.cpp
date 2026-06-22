@@ -25,13 +25,13 @@ int r1, r2;
 
 // Run with whichever memory order is currently active (TODO 1/2)
 void thread1() {
-    x.store(1, std::memory_order_relaxed);
-    r1 = y.load(std::memory_order_relaxed);
+    x.store(1, std::memory_order_seq_cst);
+    r1 = y.load(std::memory_order_seq_cst);
 }
 
 void thread2() {
-    y.store(1, std::memory_order_relaxed);
-    r2 = x.load(std::memory_order_relaxed);
+    y.store(1,  std::memory_order_seq_cst);
+    r2 = x.load(std::memory_order_seq_cst);
 }
 
 int main() {
@@ -39,8 +39,8 @@ int main() {
     const int trials = 1000;
 
     for (int i = 0; i < trials; i++) {
-        x.store(0, std::memory_order_relaxed);
-        y.store(0, std::memory_order_relaxed);
+        x.store(0, std::memory_order_seq_cst);
+        y.store(0, std::memory_order_seq_cst);
         r1 = 0;
         r2 = 0;
 

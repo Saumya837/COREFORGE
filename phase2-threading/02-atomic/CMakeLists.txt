@@ -1,6 +1,7 @@
 project(atomic)
 add_executable(atomic-counter 05-Intro/atomic-counter.cpp)
 add_executable(relaxed 06-MemoryOrdering/Relaxed.cpp)
+add_executable(acquireRelease 06-MemoryOrdering/acquireRelease.cpp)
 
 target_compile_options(first_thread PRIVATE -fsanitize=thread -g)
 target_link_options(first_thread PRIVATE -fsanitize=thread)
