@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
-project(SpinLock)
+project(day9_spinlock)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(SpinLock 
-    tests/test_spinLock.cpp 
-    src/SpinLock.cpp
-)
+find_package(Threads REQUIRED)
 
-target_include_directories(SpinLock PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+add_executable(spinlock spinlock.cpp)
 
-target_link_libraries(SpinLock pthread)
+target_compile_options(spinlock PRIVATE -fsanitize=thread -g)
+target_link_options(spinlock PRIVATE -fsanitize=thread)
+target_link_libraries(spinlock PRIVATE Threads::Threads)
