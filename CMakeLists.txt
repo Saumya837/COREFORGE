@@ -8,3 +8,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(phase1-memory)
 add_subdirectory(phase2-threading)
+add_subdirectory(phase3-async)
