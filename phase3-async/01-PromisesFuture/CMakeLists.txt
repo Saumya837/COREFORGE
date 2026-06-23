@@ -7,6 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Threads REQUIRED)
  
 add_executable(promise_future promise_future.cpp)
+add_executable(multi_future multi_future.cpp)
+add_executable(vector_promise vector_promise.cpp)
+add_executable(shared_promise shared_promise.cpp)
  
 target_compile_options(promise_future PRIVATE -fsanitize=thread -g)
 target_link_options(promise_future PRIVATE -fsanitize=thread)
