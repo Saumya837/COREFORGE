@@ -24,13 +24,7 @@ int main() {
 
     std::vector<std::thread> readers;
 
-    // TODO 2: launch 4 reader threads. Each one should:
-    //   - capture shared_fut BY VALUE (not by reference!) -- each
-    //     thread gets its own cheap copy, which is what makes calling
-    //     .get() from multiple threads safe. Capture i by value too.
-    //   - call shared_fut.get() to receive the value (this BLOCKS until
-    //     the promise is set)
-    //   - print "reader <i> got <value>"
+    // launch 4 reader threads. Each one should:
     for (int i = 0; i < 4; i++) {
         readers.emplace_back(std::thread([shared_fut, i] (){
             int val = shared_fut.get();
@@ -42,16 +36,15 @@ int main() {
     // the value -- makes the "all 4 were really blocked" timing visible
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    // TODO 3: set the promise's value to 42 -- this unblocks ALL 4
+    // set the promise's value to 42 -- this unblocks ALL 4
     // readers at once
     prom.set_value(42);
 
 
-    // TODO 4: join all reader threads
+    // join all reader threads
     for (int i = 0; i < 4; i++) {
         readers[i].join();
     }
-
 
     return 0;
 }
