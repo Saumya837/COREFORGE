@@ -11,6 +11,8 @@ add_executable(multi_future multi_future.cpp)
 add_executable(vector_promise vector_promise.cpp)
 add_executable(shared_promise shared_promise.cpp)
 add_executable(broken_promise broken_promise.cpp)
+add_executable(set_exception set_exception.cpp)
+add_executable(wait_until wait_until.cpp)
  
 target_compile_options(promise_future PRIVATE -fsanitize=thread -g)
 target_link_options(promise_future PRIVATE -fsanitize=thread)

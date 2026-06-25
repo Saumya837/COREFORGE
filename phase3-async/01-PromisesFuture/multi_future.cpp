@@ -30,7 +30,7 @@ int main() {
 
     auto start = std::chrono::steady_clock::now();
 
-    // TODO 1: for each input, launch std::async(std::launch::async,
+    // for each input, launch std::async(std::launch::async,
     // slow_square, input) and push the returned future into 'futures'
     for (int x : inputs) {
         futures.emplace_back(std::async(std::launch::async, slow_square, x));
@@ -48,11 +48,6 @@ int main() {
     auto end = std::chrono::steady_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     std::cout << "Total time: " << elapsed << "ms" << std::endl;
-
-    // ANSWER BEFORE RUNNING: each slow_square sleeps 500ms. If these 3
-    // tasks ran truly sequentially, total time would be ~1500ms. If
-    // they ran in parallel, total time would be ~500ms (plus a little
-    // overhead). Predict which one you'll see, THEN run it and check.
 
     return 0;
 }
