@@ -40,24 +40,18 @@ std::mutex m;
 
 // BUG: the empty() check is OUTSIDE the lock (check-then-act / TOCTOU race).
 int pop() {
-    if (!q.empty()) {                          // checked here (no lock held)...
-        std::this_thread::yield();             // ...widen the window so other
-                                               //    threads also pass the check
-        std::lock_guard<std::mutex> lk(m);     // ...take the lock too late
-
-        if (q.empty()) {
-            // We LOST the race: another thread already took the last item
-            // between our check and our lock. The real bug would now call
-            // q.front()/q.pop() on an EMPTY queue — undefined behavior that
-            // crashes or corrupts intermittently. To make that failure
-            // reproducible for this exercise, we crash deterministically here:
-            volatile int* boom = nullptr;
-            return *boom;                      // SIGSEGV — "the race bit us"
-        }
-
-        int v = q.front();                     // safe only because we re-checked
-        q.pop();
-        return v;
+    {
+        std::lock_guard<std::mutex> lk(m);     // Fixed 
+        if (!q.empty()) {                          
+            std::this_thread::yield();             
+                if (q.empty()) {
+                    volatile int* boom = nullptr;
+                    return *boom;                      // SIGSEGV — "the race bit us"
+                }
+                int v = q.front();            
+                q.pop();
+                return v;
+            }
     }
     return -1;
 }
@@ -78,6 +72,8 @@ int main() {
         for (auto& t : threads)
             t.join();
     }
-    std::cout << "survived all rounds (try again — it's intermittent)\n";
+    std::cout << "survived all rounds\n";
     return 0;
 }
+
+//Understand the code behaviour
