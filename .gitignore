@@ -11,3 +11,6 @@ build/
 *.o
 *.out
 *.a
+.bin*.bin
+RAII/gen
+RAII/gen_fast
