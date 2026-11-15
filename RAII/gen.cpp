@@ -4,14 +4,6 @@
 #include <charconv>
 #include <cstring>
 
-// class FileHandle{
-//     int fd_;
-// public:
-//     explicit FileHandle(const char* path):  {}
-//     ~FileHandle() {if fd >= 0} ::close(fd_);
-//     int get() const{ return fd_; }
-// }
-
 bool parse_u64(const char* s, uint64_t &out){
     const char* last = s + std::strlen(s);
     auto [ptr, ec] = std::from_chars(s, last, out);
