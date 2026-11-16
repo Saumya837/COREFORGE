@@ -28,7 +28,6 @@ bool write_record(const char* path, uint64_t N){
             return false;
         }
     }
-
     if(std::fclose(fp)){
         std::perror("Error while closing file");
         return false;
